@@ -3,20 +3,41 @@ import Todo from "./components/Todo.js";
 import Form from "./components/Form.js";
 import FilterButton from "./components/FilterButton.js";
 import { nanoid } from "nanoid";
+//import 'bootstrap/dist/css/bootstrap.min.css';
+
+const FILTER_MAP = {
+    All: () => true,
+    Active: task => !task.completed,
+    Completed: task => task.completed
+};
+
+const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 function App(props) {
 
     const [tasks, setTasks] = useState(props.tasks);
+    const [filter, setFilter] = useState('All');
 
-    const taskList = tasks?.map(task => (
-        <Todo
-            name={task.name}
-            completed={task.completed}
-            id={task.id}
-            key={task.id}
-            toggleTaskCompleted={toggleTaskCompleted}
-            deleteTask={deleteTask}
-            editTask={editTask} />
+    const taskList = tasks?.filter(FILTER_MAP[filter])
+        .map(task => (
+            <Todo
+                name={task.name}
+                completed={task.completed}
+                id={task.id}
+                key={task.id}
+                toggleTaskCompleted={toggleTaskCompleted}
+                deleteTask={deleteTask}
+                editTask={editTask}
+            />
+        ));
+
+    const filterList = FILTER_NAMES.map(name => (
+        <FilterButton
+            key={name}
+            name={name}
+            isPressed={name === filter}
+            setFilter={setFilter}
+        />
     ));
 
     const taskNoun = taskList.length !== 1 ? 'tasks' : 'task';
@@ -44,7 +65,7 @@ function App(props) {
 
     function editTask(id, name) {
         const editedTask = tasks.map(task => {
-            if (id == task.id) {
+            if (id === task.id) {
                 return { ...task, name: name }
             }
             return task;
@@ -57,9 +78,7 @@ function App(props) {
             <h1>ToDo List </h1>
             <Form addTask={addTask} />
             <div className="filters btn-group stack-exception">
-                <FilterButton filterName="All" />
-                <FilterButton filterName="To do" />
-                <FilterButton filterName="Completed" />
+                {filterList}
             </div>
             <h2 id="list-heading">
                 {headingText}
@@ -71,7 +90,6 @@ function App(props) {
             >
                 {taskList}
             </ul>
-            <button onClick={() => alert("hi")}>Hi</button>
         </div>
     );
 }
