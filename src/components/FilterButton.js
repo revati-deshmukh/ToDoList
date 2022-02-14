@@ -8,7 +8,6 @@ function FilterButton(props) {
             <span>{props.filterName}</span>
             <span className="visually-hidden"> tasks</span>
         </button>
-
     );
 }
 
