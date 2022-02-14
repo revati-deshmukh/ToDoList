@@ -14,7 +14,8 @@ function App(props) {
             completed={task.completed}
             id={task.id}
             key={task.id}
-            toggleTaskCompleted={toggleTaskCompleted} />
+            toggleTaskCompleted={toggleTaskCompleted}
+            deleteTask={deleteTask} />
     ));
 
     const taskNoun = taskList.length !== 1 ? 'tasks' : 'task';
@@ -33,6 +34,11 @@ function App(props) {
             return task;
         })
         setTasks(updateTask);
+    }
+
+    function deleteTask(id) {
+        const remainingTasks = tasks.filter(task => id !== task.id);
+        setTasks(remainingTasks);
     }
 
     return (
